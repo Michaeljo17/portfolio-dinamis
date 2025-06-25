@@ -1,0 +1,9 @@
+# File konfigurasi lokal
+.env
+
+# Folder dependensi PHP (jika menggunakan Composer nanti)
+/vendor
+
+# Log dan file sistem operasi
+*.log
+.DS_Store
