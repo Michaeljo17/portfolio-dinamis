@@ -11,18 +11,28 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 // 1. Sertakan file koneksi database
 require_once '../includes/db_connect.php';
 
-// 2. Ambil semua data proyek dari database
-$sql = "SELECT id, title, image_path FROM projects ORDER BY created_at DESC";
+// 2. Ambil semua data proyek, GABUNGKAN dengan SATU gambar perwakilan
+$sql = "
+    SELECT 
+        p.id, 
+        p.title,
+        (SELECT pi.image_url FROM project_images pi WHERE pi.project_id = p.id ORDER BY pi.id ASC LIMIT 1) as representative_image
+    FROM 
+        projects p 
+    ORDER BY 
+        p.id DESC
+";
 $result = $conn->query($sql);
 
+// Siapkan array untuk menampung semua data proyek
 $projects = [];
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $projects[] = $row;
     }
 }
-// ... (setelah $conn->close();)
 
+// Siapkan pesan notifikasi jika ada
 $status_message = '';
 $message_type = '';
 if(isset($_GET['status'])){
@@ -58,7 +68,8 @@ $conn->close();
         <div class="message <?php echo $message_type; ?>">
             <?php echo $status_message; ?>
         </div>
-    <?php endif; ?>
+        <?php endif; ?>
+
         <div class="page-header">
             <h2>Manajemen Proyek</h2>
             <a href="create_project.php" class="btn btn-primary">Tambah Proyek Baru</a>
@@ -78,7 +89,13 @@ $conn->close();
                     <?php foreach ($projects as $project): ?>
                         <tr>
                             <td><?php echo $project['id']; ?></td>
-                            <td><img src="../<?php echo htmlspecialchars($project['image_path']); ?>" alt="Gambar Proyek"></td>
+                            <td>
+                                <?php if (!empty($project['representative_image'])): ?>
+                                    <img src="../<?php echo htmlspecialchars($project['representative_image']); ?>" alt="Gambar Proyek">
+                                <?php else: ?>
+                                    <span>Tidak ada gambar</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?php echo htmlspecialchars($project['title']); ?></td>
                             <td class="actions">
                                 <a href="edit_project.php?id=<?php echo $project['id']; ?>" class="btn-secondary">Edit</a>

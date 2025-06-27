@@ -9,68 +9,76 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 // Skrip ini hanya akan berjalan jika ada data yang dikirim melalui metode POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
+
     // Hubungkan ke database
     require_once '../includes/db_connect.php';
 
-    // 1. Ambil semua data dari formulir
+    // 1. Ambil semua data teks dari formulir
     $title = $_POST['title'];
     $short_desc = $_POST['short_description'];
     $long_desc = $_POST['long_description'];
     $techs = $_POST['technologies'];
-    
-    // 2. Proses Upload Gambar
-    $image_path = ''; // Siapkan variabel path gambar
-    if (isset($_FILES['project_image']) && $_FILES['project_image']['error'] == 0) {
-        $target_dir = "../uploads/"; // Folder tujuan untuk menyimpan gambar
+
+    // 2. Simpan data teks ke tabel `projects` terlebih dahulu
+    $stmt = $conn->prepare("INSERT INTO projects (title, short_description, long_description, technologies) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $title, $short_desc, $long_desc, $techs);
+
+    // Eksekusi perintah dan periksa jika berhasil
+    if ($stmt->execute()) {
+        // Jika berhasil, dapatkan ID dari proyek yang baru saja kita buat
+        $last_project_id = $stmt->insert_id;
+
+        // 3. Sekarang, proses upload dan penyimpanan SETIAP GAMBAR
+        $target_dir = "../uploads/"; // Folder tujuan
 
         // Buat folder 'uploads' jika belum ada
         if (!file_exists($target_dir)) {
             mkdir($target_dir, 0777, true);
         }
 
-        // Buat nama file yang unik untuk menghindari konflik nama file yang sama
-        $image_name = time() . '_' . basename($_FILES["project_image"]["name"]);
-        $target_file = $target_dir . $image_name;
+        // Siapkan perintah SQL untuk menyimpan ke tabel BARU kita, `project_images`
+        $imgStmt = $conn->prepare("INSERT INTO project_images (project_id, image_url) VALUES (?, ?)");
 
-        // Pindahkan file yang di-upload dari lokasi sementara ke folder tujuan
-        if (move_uploaded_file($_FILES["project_image"]["tmp_name"], $target_file)) {
-            // Jika berhasil, simpan path relatifnya untuk database
-            $image_path = "uploads/" . $image_name;
-        } else {
-            die("Maaf, terjadi error saat mengupload file Anda.");
+        // Periksa apakah ada file yang diupload (ingat nama 'images[]' dari form)
+        if (isset($_FILES['images']) && !empty(array_filter($_FILES['images']['name']))) {
+
+            // Lakukan perulangan untuk setiap file yang diupload
+            foreach ($_FILES['images']['name'] as $key => $name) {
+                // Buat nama file yang unik
+                $image_name = time() . '_' . basename($_FILES["images"]["name"][$key]);
+                $target_file = $target_dir . $image_name;
+
+                // Pindahkan file ke folder 'uploads'
+                if (move_uploaded_file($_FILES["images"]["tmp_name"][$key], $target_file)) {
+                    // Simpan path relatifnya
+                    $image_path = "uploads/" . $image_name;
+
+                    // Hubungkan gambar ini dengan ID proyek, lalu simpan
+                    $imgStmt->bind_param("is", $last_project_id, $image_path);
+                    $imgStmt->execute();
+                }
+            }
         }
+
+        $imgStmt->close(); // Tutup statement gambar
+
+        // Jika semua proses selesai, arahkan ke halaman manajemen
+        header("Location: manage_projects.php?status=success_create");
+        exit;
+
     } else {
-        die("Error: Tidak ada gambar yang diupload atau terjadi error saat upload.");
+        die("Error saat menyimpan data proyek utama: " . $stmt->error);
     }
 
-    // 3. Simpan data ke Database menggunakan Prepared Statements (lebih aman dari SQL Injection)
-    $sql = "INSERT INTO projects (title, short_description, long_description, technologies, image_path) VALUES (?, ?, ?, ?, ?)";
-    
-    if ($stmt = $conn->prepare($sql)) {
-        // "sssss" berarti kita akan mengirim 5 data dengan tipe String
-        $stmt->bind_param("sssss", $title, $short_desc, $long_desc, $techs, $image_path);
-        
-        // Eksekusi perintah
-        if ($stmt->execute()) {
-            // Jika berhasil, arahkan kembali ke halaman manajemen
-            header("Location: manage_projects.php?status=success_create");
-            exit;
-        } else {
-            die("Error saat menyimpan ke database: " . $stmt->error);
-        }
-        // Tutup statement
-        $stmt->close();
-    } else {
-        die("Error saat mempersiapkan statement SQL: " . $conn->error);
-    }
-
-    // Tutup koneksi
-    $conn->close();
+    // Tutup statement utama
+    $stmt->close();
 
 } else {
-    // Jika halaman ini diakses langsung tanpa mengirim data, tendang ke dashboard
+    // Jika tidak ada data POST, tendang ke dashboard
     header("Location: dashboard.php");
     exit;
 }
+
+// Tutup koneksi
+$conn->close();
 ?>

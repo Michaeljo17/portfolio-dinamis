@@ -41,8 +41,8 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 <input type="text" id="technologies" name="technologies" placeholder="Contoh: HTML, CSS, PHP, JavaScript">
             </div>
             <div class="form-group">
-                <label for="project_image">Gambar Proyek</label>
-                <input type="file" id="project_image" name="project_image" accept="image/png, image/jpeg, image/jpg" required>
+                <label for="images">Gambar Proyek (Bisa pilih lebih dari satu)</label>
+                <input type="file" id="images" name="images[]" multiple accept="image/png, image/jpeg, image/jpg" required>
                 <small>Format yang didukung: PNG, JPG, JPEG.</small>
             </div>
             <div class="form-actions">
