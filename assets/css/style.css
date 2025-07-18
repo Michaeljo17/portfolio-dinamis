@@ -1,0 +1,443 @@
+/* Import Font dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+/* Variabel Warna & Reset Dasar */
+:root {
+  --bg-color: #0a0a0a;
+  --text-color: #e0e0e0;
+  --primary-color: #00ffff; /* Cyan */
+  --card-bg: #111111;
+  --border-color: #222;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: none; /* Sembunyikan kursor asli */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* Kursor Kustom */
+.cursor {
+  width: 25px;
+  height: 25px;
+  border: 1px solid var(--primary-color);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease, background-color 0.2s ease;
+  z-index: 9999;
+}
+
+a:hover ~ .cursor, .cta-button:hover ~ .cursor, .details-button:hover ~ .cursor {
+  transform: scale(2.5) translate(-20%, -20%);
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+/* Layout Utama */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  text-shadow: 0 0 10px var(--primary-color);
+}
+
+/* Header & Navigasi */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+header .logo a {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+header nav {
+    display: flex; /* Memastikan navigasi horizontal */
+}
+
+header nav a {
+  margin-left: 1.5rem;
+  font-size: 1rem;
+}
+
+/* Section Umum */
+.section {
+  padding: 6rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #fff;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+/* Hero Section */
+.hero {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hero h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* Tombol Call-to-Action */
+.cta-button, .details-button {
+  display: inline-block;
+  padding: 0.8rem 1.6rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  color: var(--primary-color);
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cta-button:hover, .details-button:hover {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  text-shadow: none;
+}
+
+/* Proyek */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.project-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: 5px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+}
+
+.project-image {
+  width: 100%;
+  height: 180px;
+  margin-bottom: 1rem;
+  border-radius: 3px;
+  object-fit: cover;
+}
+
+.project-card h3 {
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.project-card .details-button {
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 2rem 0;
+  font-size: 0.9rem;
+}
+
+/* Animasi Fade-in (CSS Part) */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* CSS untuk Efek Blob Latar Belakang */
+#blob {
+  background: linear-gradient(
+    to right,
+    var(--primary-color),
+    #ff4757
+  );
+  height: 300px;
+  width: 300px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  animation: rotate 20s infinite;
+  opacity: 0.3;
+  filter: blur(100px);
+  z-index: -1;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg) translate(-50%, -50%); }
+  to { transform: rotate(360deg) translate(-50%, -50%); }
+}
+
+/* CSS untuk Link Sosial Media */
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.social-links a {
+  font-size: 1.8rem;
+  color: var(--text-color);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--primary-color);
+  transform: translateY(-5px);
+  text-shadow: 0 0 10px var(--primary-color);
+}
+
+/* --- Gaya untuk Foto Profil --- */
+.about-content {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+.about-content p {
+  flex-grow: 1;
+}
+
+/* ======================================================= */
+/* GAYA UNTUK MODAL POP-UP & ANIMASI BARU                  */
+/* ======================================================= */
+
+/* Lapisan latar belakang gelap */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  
+  /* Sembunyikan secara default */
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 0.3s, opacity 0.3s ease;
+}
+
+.modal-overlay.visible {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s, opacity 0.3s ease;
+}
+
+/* Konten utama modal */
+.modal-content {
+  background-color: var(--card-bg);
+  padding: 30px 40px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 1100px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.visible .modal-content {
+  transform: scale(1);
+}
+
+/* Tombol close (X) */
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 2.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    color: var(--primary-color);
+    transform: rotate(90deg);
+}
+
+/* Layout body modal */
+.modal-body {
+  display: flex;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+/* Galeri gambar di dalam modal */
+.modal-gallery {
+  flex: 2;
+  display: flex;
+  flex-direction: column; /* Tata letak vertikal */
+  align-items: center; /* Pusatkan gambar secara horizontal */
+  gap: 20px;
+}
+
+.modal-gallery img {
+  width: 90%; /* Lebar gambar */
+  max-width: 600px; /* Batasi lebar maksimum */
+  height: auto;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  object-fit: cover;
+  
+  /* Pengaturan awal untuk animasi */
+  opacity: 0;
+  transform: translateX(-100px); /* Mulai dari kiri */
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Gambar genap akan mulai dari kanan */
+.modal-gallery img:nth-child(even) {
+  transform: translateX(100px); 
+}
+
+/* Saat kelas .animated ditambahkan oleh JS, gambar akan masuk */
+.modal-gallery img.animated {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* Detail teks di dalam modal */
+.modal-details {
+  flex: 1;
+}
+
+.modal-details h2 {
+  margin-top: 0;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  font-size: 2.2rem;
+}
+
+.modal-details h4 {
+    color: #fff;
+    border-bottom: 1px solid var(--primary-color);
+    padding-bottom: 5px;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Pengaturan awal untuk animasi teks */
+.modal-details > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* Saat kelas .animated ditambahkan, teks akan muncul */
+.modal-details > *.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* Aturan untuk Mobile */
+@media (max-width: 900px) {
+  .modal-body {
+    flex-direction: column;
+  }
+  .modal-content {
+    padding: 20px;
+  }
+  .modal-details h2 {
+      font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  .section h2 {
+    font-size: 2rem;
+  }
+  header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+   .about-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-image {
+    margin-bottom: 1.5rem;
+  }
+}
